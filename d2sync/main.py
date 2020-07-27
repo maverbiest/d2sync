@@ -3,7 +3,7 @@ import argparse
 import os
 import time
 
-from file_loader import FileLoader
+from character_loaders import LocalCharacterLoader
 
 def parser():
     parser = argparse.ArgumentParser()
@@ -18,16 +18,13 @@ def main():
     args = parser()
 
     if args.directory:
-        files = FileLoader(path=args.directory)
+        files = LocalCharacterLoader(path=args.directory)
     elif os.path.exists("path_cache.json"):
-        files = FileLoader(cache="path_cache.json")
+        files = LocalCharacterLoader(cache="path_cache.json")
     else:
-        raise ValueError("Specify path or cache for save files")
+        raise ValueError("No file specified and no cache could be found.")
 
-    for char in files.characters.keys():
-        print("Character: {}".format(char))
-        for file in files.characters[char]:
-            print("\t{}, {}".format(file[0], time.asctime(time.gmtime(file[1]))))
+    files.pretty_print_chars()
 
 if __name__ == '__main__':
     main()
