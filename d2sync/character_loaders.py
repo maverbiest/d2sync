@@ -12,15 +12,15 @@ __all__ = [
 ]
 
 class CharacterLoader(object):
-    def __init__(self, path=None, cache=None):
+    def __init__(self, path=None):
         if path:
             self.path = self.set_new_path(path)
         else:
             try:
-                with open(cache, "r") as f:
+                with open("config/path_cache.json", "r") as f:
                     self.path = json.load(f)["path"]
-            except:
-                print("Something went wrong with the cache")
+            except FileNotFoundError:
+                print("ERROR: No directory for Diablo II saves was specified and no cache could be found.")
                 sys.exit(1)
 
         self.characters = None
@@ -28,7 +28,7 @@ class CharacterLoader(object):
     def set_new_path(self, path):
         if not os.path.exists(path):
             raise FileNotFoundError("Specified path to save files does not exist")
-        with open("path_cache.json", "w") as cache:
+        with open("config/path_cache.json", "w") as cache:
             json.dump({"path": path}, cache)
         return path
 
@@ -37,8 +37,8 @@ class CharacterLoader(object):
 
 
 class LocalCharacterLoader(CharacterLoader):
-    def __init__(self, path=None, cache=None):
-        super().__init__(path, cache)
+    def __init__(self, path=None):
+        super().__init__(path)
         self.characters = self.load_characters()
 
     def get_abs_path(self, file_name):
@@ -68,7 +68,7 @@ class LocalCharacterLoader(CharacterLoader):
 
     def pretty_print_chars(self):
         print("-"*50)
-        print("Characters found locally")
+        print("Found {} Diablo II characters locally".format(len(self.characters)))
         print("-"*50)
         [print(i) for i in self.characters.values()]
         print("-"*50)

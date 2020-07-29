@@ -27,7 +27,7 @@ class Character(object):
 
     def set_last_modified(self, last_modified):
         if self.last_modified:
-            raise AttributeError("Character '{}' already has a last modief time!".format(self.name))
+            raise AttributeError("Character '{}' already has a last modified time!".format(self.name))
         self.last_modified = last_modified
 
     def get_last_modified(self):
@@ -43,7 +43,7 @@ class Character(object):
         return time.asctime(time.localtime(epoch_time))
 
     def __str__(self):
-        return "Name: {}\n\tcreated: {}\n\tlast modified: {}".format(
+        return "Name: {}\ncreated: {}\nlast modified: {}\n".format(
             self.get_name(),
             self.epoch_to_local(self.get_creation_time()),
             self.epoch_to_local(self.get_last_modified())

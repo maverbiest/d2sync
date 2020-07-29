@@ -4,6 +4,7 @@ import os
 import time
 
 from character_loaders import LocalCharacterLoader
+from build_service import ServiceBuilder
 
 def parser():
     parser = argparse.ArgumentParser()
@@ -17,14 +18,22 @@ def parser():
 def main():
     args = parser()
 
-    if args.directory:
-        files = LocalCharacterLoader(path=args.directory)
-    elif os.path.exists("path_cache.json"):
-        files = LocalCharacterLoader(cache="path_cache.json")
-    else:
-        raise ValueError("No file specified and no cache could be found.")
-
+    files = LocalCharacterLoader(path=args.directory)
     files.pretty_print_chars()
+
+    builder = ServiceBuilder()
+    service = builder.build_service()
+
+    results = service.files().list(
+        pageSize=10, fields="nextPageToken, files(id, name)").execute()
+    items = results.get('files', [])
+
+    if not items:
+        print('No files found.')
+    else:
+        print('Files:')
+        for item in items:
+            print(u'{0} ({1})'.format(item['name'], item['id']))
 
 if __name__ == '__main__':
     main()
